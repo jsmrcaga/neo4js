@@ -13,12 +13,10 @@ The project started at the Univesity of Technology of Compiègne, by two student
 To Come 
 -------
 
-Neo4JSparse
-~~~~~~~~~~~
+##Neo4JSparse
 NeoJSparse will be a library to parse the results gotten by Neo4js, in a simple JSON format.  
 
-More Functions
-~~~~~~~~~~~~~~
+##More Functions
 More functions to come `addRelProperty()` and `deleteRelProperty()` to be able to manipulate properties in relationships.
 
 Installation
