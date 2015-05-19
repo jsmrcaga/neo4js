@@ -3,20 +3,20 @@
 	-	Make node from attribute, but is more display than code	
 *****************************/
 
-module.exports = function(neo4js){
+module.exports = {
 
 
-	neo4js.config ={
+	config : {
 		URL : "http://neo4j:Lesbubulles24@localhost:7474/db/data/"
 	}
 
-	neo4js.getNode = function(nodeNumber, callback){
+	getNode : function(nodeNumber, callback){
 		if (typeof nodeNumber == 'undefined'){
 			throw new Error("nodeNumber is required in getNode");
 		}
 
 	 	var params = {
-		 	url : neo4js.config.URL + "node/" + nodeNumber,
+		 	url : this.config.URL + "node/" + nodeNumber,
 		 	method: "GET",
 		 	callback : callback, 
 		 	status : 200
@@ -26,14 +26,14 @@ module.exports = function(neo4js){
 	};
 
 
-	neo4js.createNode = function(dataToNode) {
+	createNode : function(dataToNode) {
 		if(typeof dataToNode == 'undefined' || typeof dataToNode != 'object') {
 			throw new Error("CreateNode needs data to create node, in a JavaScript object");
 		}
 
 		dataToNode = JSON.stringify(dataToNode);
 		var params = {
-			url : neo4js.config.URL + "node",
+			url : this.config.URL + "node",
 			data : dataToNode, //dataToNode JSON string
 			method: "POST",
 			status: 201,
@@ -45,7 +45,7 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.modifyNode = function(node, attributes){
+	modifyNode : function(node, attributes){
 
 		if(typeof node == 'undefined' || (typeof attributes == 'undefined' || typeof attributes != 'object' )) {
 			throw new Error("Node ID and Attributes (JS Object) are required to modifyNode");
@@ -53,7 +53,7 @@ module.exports = function(neo4js){
 
 		var dataToChange = JSON.stringify(attributes);
 		var params = {
-			url: neo4js.config.URL + "node/" + node + "/properties",
+			url: this.config.URL + "node/" + node + "/properties",
 			method: "PUT",
 			status: 204,
 			data: dataToChange,
@@ -65,30 +65,30 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.updateNode = function(node, attributes){
+	updateNode : function(node, attributes){
 		if(typeof node == 'undefined' || typeof attributes == 'undefined' || typeof attributes != 'object') {
 			throw new Error("Node ID and attributes (as JS object) are required to updateNode");
 		}
 
-		neo4js.getNode(node, function(dataNode){
+		this.getNode(node, function(dataNode){
 			dataNode = JSON.parse(dataNode);
 			var nodeProps =  dataNode.data;
 
 			for (var key in attributes){
 				nodeProps[key] = attributes[key];
 			}
-			neo4js.modifyNode(node, nodeProps);
+			this.modifyNode(node, nodeProps);
 		});
 
 	};
 
-	neo4js.getRelationships = function(node, callback) {
+	getRelationships : function(node, callback) {
 		if (typeof node == 'undefined'){
 			throw new Error("Node is needed to get relationships");
 		}
 
 		var params = {
-			url: neo4js.config.URL + "node/"+node+"/relationships/all", 
+			url: this.config.URL + "node/"+node+"/relationships/all", 
 			method: "GET",
 			status: 200,
 			callback : callback
@@ -97,13 +97,13 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.addLabel = function(node, label) {
+	addLabel : function(node, label) {
 		if(typeof node == 'undefined' || typeof label == 'undefined'){
 			throw new Error("Parameters node(int) and label(string) are required for addLabel");
 		}
 
 		var params = {
-			url: neo4js.config.URL + 'node/' + node + '/labels',
+			url: this.config.URL + 'node/' + node + '/labels',
 			method: "POST", 
 			data : JSON.stringify(label),
 			status: 204, 
@@ -114,13 +114,13 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.deleteNodeSecure = function(node){
+	deleteNodeSecure : function(node){
 		if (typeof node == 'undefined'){
 			throw new Error("Node ID is required to delete");
 		}
 		var params = {
 			method: "DELETE",
-			url : neo4js.config.URL + "node/" + node,
+			url : this.config.URL + "node/" + node,
 			status: 204,
 			callback : function(){
 				console.log("Node DELETED");
@@ -131,9 +131,9 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.deleteNode = function(node) {
+	deleteNode : function(node) {
 		//verify relationships
-		neo4js.getNode(node, function(nodeData){
+		this.getNode(node, function(nodeData){
 			var parsedNode = JSON.parse(nodeData);
 			//outgoing
 			var params = {
@@ -147,7 +147,7 @@ module.exports = function(neo4js){
 						console.log("Have to delete "+ rels.length + " relationships, starting NOW");
 						for (var i=0; i<rels.length; i++){
 							console.log("Deleting relationship: ",rels[i].metadata.id);
-							neo4js.deleteRelationshipSync(rels[i].metadata.id);
+							this.deleteRelationshipSync(rels[i].metadata.id);
 						}
 					}
 				}
@@ -160,18 +160,18 @@ module.exports = function(neo4js){
 		
 			AJAXCall(params);
 			
-			neo4js.deleteNodeSecure(node);
+			this.deleteNodeSecure(node);
 		});
 
 	};
 
-	neo4js.deleteProperty = function(node, propertyName){
+	deleteProperty : function(node, propertyName){
 		if(typeof propertyName == 'undefined' || typeof node == 'undefined') {
 			throw new Error("Node and Property Name is needed to delete it (duh)");
 		}
 
 		var params = {
-			url: neo4js.config.URL + "node/" + node + "/properties/" + propertyName,
+			url: this.config.URL + "node/" + node + "/properties/" + propertyName,
 			method: "DELETE",
 			status: 204,
 			callback: function() {
@@ -182,14 +182,14 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.deleteAllProperties = function(node){
+	deleteAllProperties : function(node){
 		if(typeof node == 'undefined') {
 			throw new Error("Node is required to delete all properties from it");
 		}
 
 		var params= {
 			method: "DELETE",
-			url: neo4js.config.URL + "node/" + node + "/properties",
+			url: this.config.URL + "node/" + node + "/properties",
 			status: 204,
 			callback: function(){
 				console.log("Deleted all properties from node: " + node);
@@ -199,7 +199,7 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.deleteRelationship = function(relation) {
+	deleteRelationship : function(relation) {
 		if(typeof relation == 'undefined') {
 			throw new Error("Relationship ID is required to delete relationship");
 		}
@@ -217,7 +217,7 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.deleteRelationshipSync = function(relation) {
+	deleteRelationshipSync : function(relation) {
 		//to use with delete node
 		if(typeof relation == 'undefined') {
 			throw new Error("Relationship ID is required to delete relationship");
@@ -237,16 +237,16 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.createRelationship = function(from_node, to_node, type) {
+	createRelationship : function(from_node, to_node, type) {
 		if(typeof from_node == 'undefined' || typeof to_node == 'undefined' || typeof type == 'undefined'){
 			throw new Error("Params (int)from, (int)to and (string)type are required");
 		}
 
 		var params = {
-			url: neo4js.config.URL + "node/"+from_node+"/relationships",
+			url: this.config.URL + "node/"+from_node+"/relationships",
 			method: "POST",
 			status: 201,
-			data: '{"to": neo4js.config.URL + "node/'+to_node+'", "type": "'+type+'"}',
+			data: '{"to": this.config.URL + "node/'+to_node+'", "type": "'+type+'"}',
 			callback :function(){
 				console.log("Relationship Created");
 			}
@@ -255,7 +255,7 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.cypherQuery = function(query, callback, params) {
+	cypherQuery : function(query, callback, params) {
 		if (typeof query == 'undefined'){
 			throw new Error("Query is required for cypherQuery");
 		}
@@ -277,7 +277,7 @@ module.exports = function(neo4js){
 
 		var aParams = {
 			method: "POST",
-			url: neo4js.config.URL +"cypher",
+			url: this.config.URL +"cypher",
 			status: 200,
 			data: data,
 			callback: callback
@@ -286,7 +286,7 @@ module.exports = function(neo4js){
 		AJAXCall(aParams);
 	};
 
-	neo4js.getShortestPath = function(n1, n2, usrData, callback) {
+	getShortestPath : function(n1, n2, usrData, callback) {
 		/*GET SHORTEST PATH
 			Must experiment TODO:
 				- find if "relationships" is required in data
@@ -307,7 +307,7 @@ module.exports = function(neo4js){
 		var pathURL = (unique) ? "/path" : "/paths";
 
 		var data = {
-			to : neo4js.config.URL + "node/"+ n2,
+			to : this.config.URL + "node/"+ n2,
 			max_depth : usrData.max_depth,
 			relationships : {
 				type : usrData.relationType,
@@ -319,7 +319,7 @@ module.exports = function(neo4js){
 		data = JSON.stringify(data);
 
 		var params = {
-			url: neo4js.config.URL + "node/"+n1+pathURL,
+			url: this.config.URL + "node/"+n1+pathURL,
 			method : "POST",
 			status: 200,
 			data: data,
@@ -329,7 +329,7 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.getDegree = function(nodeNb, callback, direction, types) {
+	getDegree : function(nodeNb, callback, direction, types) {
 		if (typeof nodeNb == 'undefined') throw new Error("Node number is required for getDegree");
 
 		var urlEnd = (typeof direction == 'undefined') ? "/all" : "/" + direction + "/";
@@ -341,7 +341,7 @@ module.exports = function(neo4js){
 		}
 
 		var params = {
-			url: neo4js.config.URL + "node/"+nodeNb+"/degree" + urlEnd,
+			url: this.config.URL + "node/"+nodeNb+"/degree" + urlEnd,
 			method: "GET",
 			status:200,
 			callback: callback
@@ -350,7 +350,7 @@ module.exports = function(neo4js){
 		AJAXCall(params);
 	};
 
-	neo4js.commitTransaction = function(query, callback, props) {
+	commitTransaction : function(query, callback, props) {
 		//Not working : 415 Unsupported media type
 		if(typeof query == 'undefined') {
 			throw new Error("Query is required for commitTransaction");
@@ -375,7 +375,7 @@ module.exports = function(neo4js){
 		
 		console.log("Data:", JSON.stringify(data));
 		var params = {
-			url: neo4js.config.URL + "transaction/commit",
+			url: this.config.URL + "transaction/commit",
 			method: "POST",
 			status: 200,
 			callback: callback,
