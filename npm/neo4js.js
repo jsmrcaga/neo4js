@@ -8,7 +8,7 @@ module.exports = {
 
 	config : {
 		URL : "http://neo4j:Lesbubulles24@localhost:7474/db/data/"
-	}
+	},
 
 	getNode : function(nodeNumber, callback){
 		if (typeof nodeNumber == 'undefined'){
@@ -23,7 +23,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 
 	createNode : function(dataToNode) {
@@ -43,7 +43,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	modifyNode : function(node, attributes){
 
@@ -63,7 +63,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	updateNode : function(node, attributes){
 		if(typeof node == 'undefined' || typeof attributes == 'undefined' || typeof attributes != 'object') {
@@ -80,7 +80,7 @@ module.exports = {
 			this.modifyNode(node, nodeProps);
 		});
 
-	};
+	},
 
 	getRelationships : function(node, callback) {
 		if (typeof node == 'undefined'){
@@ -95,7 +95,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	addLabel : function(node, label) {
 		if(typeof node == 'undefined' || typeof label == 'undefined'){
@@ -112,7 +112,7 @@ module.exports = {
 			}
 		};
 		AJAXCall(params);
-	};
+	},
 
 	deleteNodeSecure : function(node){
 		if (typeof node == 'undefined'){
@@ -129,7 +129,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	deleteNode : function(node) {
 		//verify relationships
@@ -163,7 +163,7 @@ module.exports = {
 			this.deleteNodeSecure(node);
 		});
 
-	};
+	},
 
 	deleteProperty : function(node, propertyName){
 		if(typeof propertyName == 'undefined' || typeof node == 'undefined') {
@@ -180,7 +180,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	deleteAllProperties : function(node){
 		if(typeof node == 'undefined') {
@@ -197,7 +197,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	deleteRelationship : function(relation) {
 		if(typeof relation == 'undefined') {
@@ -215,7 +215,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	deleteRelationshipSync : function(relation) {
 		//to use with delete node
@@ -235,7 +235,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	createRelationship : function(from_node, to_node, type) {
 		if(typeof from_node == 'undefined' || typeof to_node == 'undefined' || typeof type == 'undefined'){
@@ -253,7 +253,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	cypherQuery : function(query, callback, params) {
 		if (typeof query == 'undefined'){
@@ -284,7 +284,7 @@ module.exports = {
 		};
 
 		AJAXCall(aParams);
-	};
+	},
 
 	getShortestPath : function(n1, n2, usrData, callback) {
 		/*GET SHORTEST PATH
@@ -327,7 +327,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	getDegree : function(nodeNb, callback, direction, types) {
 		if (typeof nodeNb == 'undefined') throw new Error("Node number is required for getDegree");
@@ -348,7 +348,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 	commitTransaction : function(query, callback, props) {
 		//Not working : 415 Unsupported media type
@@ -383,7 +383,7 @@ module.exports = {
 		};
 
 		AJAXCall(params);
-	};
+	},
 
 
 	/**************************************
